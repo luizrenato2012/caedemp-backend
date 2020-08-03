@@ -1,0 +1,116 @@
+{
+	"info": {
+		"_postman_id": "d6abfa17-4e70-4d94-9939-9d7560d154d1",
+		"name": "CadEmp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Empresa POST",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"cnpj\": \"123456789\",\n  \"nome\": \"Empresa de laranja\",\n  \"tipo\": \"MATRIZ\",\n  \"razaoSocial\": \"Empresa POrodutora de Laranja'\",\n  \"contato\":\"Joa Carlos\",\n  \"email\": \"joao@email.com\",\n  \"endereco\": {\n    \"cep\": \"72000000\",\n    \"estado\":\"DF\",\n    \"bairro\": \"Cidade Velha\",\n    \"cidade\":\"Aura\",\n    \"logradouro\": \"Rua Mato sem cachorro\"\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/empresas/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"empresas",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Empresa GET",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/empresas?nome=grupo&tipo=matriz",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"empresas"
+					],
+					"query": [
+						{
+							"key": "nome",
+							"value": "grupo"
+						},
+						{
+							"key": "tipo",
+							"value": "matriz"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Empesa Delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/empresas/6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"empresas",
+						"6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Put",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"id\": 8,\n        \"cnpj\": \"57891631000165\",\n        \"nome\": \"Rei dos Doces\",\n        \"tipo\": \"MATRIZ\",\n        \"razaoSocial\": \"Rei dos Doces Ltda 2\",\n        \"contato\": \"Joao Alterado\",\n        \"email\": \"emial@email.com\",\n        \"endereco\": {\n            \"id\": 4,\n            \"cep\": \"72241321\",\n            \"estado\": \"DF\",\n            \"bairro\": \"Ceilândia Norte (Ceilândia)\",\n            \"cidade\": \"Brasília\",\n            \"logradouro\": \"QNP 13 Conjunto U\",\n            \"complemento\": \"\"\n        },\n        \"idMatriz\": null\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/empresas",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"empresas"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
