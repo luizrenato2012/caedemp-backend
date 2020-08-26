@@ -1,5 +1,8 @@
 package br.com.cademp.resource.dto;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.springframework.util.StringUtils;
 
 import br.com.cademp.model.bean.Empresa;
@@ -8,18 +11,25 @@ import br.com.cademp.model.bean.TipoEmpresa;
 public class EmpresaDTO {
 	private Long id;
 
+	@NotNull
 	private String cnpj;
 
+	@NotNull
 	private String nome;
 
+	@NotNull
 	private String tipo;
 
+	@NotNull
 	private String razaoSocial;
 
+	@NotNull
 	private String contato;
 
+	@NotNull
 	private String email;
 
+	@Valid
 	private EnderecoDTO endereco;
 	
 	private Long idMatriz;

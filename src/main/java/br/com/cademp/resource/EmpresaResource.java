@@ -3,6 +3,8 @@ package br.com.cademp.resource;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,14 +35,14 @@ public class EmpresaResource {
 	}
 	
 	@PostMapping
-	public ResponseEntity<EmpresaDTO> inclui(@RequestBody EmpresaDTO empresa) {
+	public ResponseEntity<EmpresaDTO> inclui(@Valid @RequestBody EmpresaDTO empresa) {
 		EmpresaDTO empresaDtoNova = service.save(empresa);
 		ResponseEntity response = new ResponseEntity(HttpStatus.CREATED);
 		return response.of(Optional.of(empresaDtoNova));
 	}
 	
 	@PutMapping
-	public ResponseEntity<EmpresaDTO> altera(@RequestBody EmpresaDTO empresa) {
+	public ResponseEntity<EmpresaDTO> altera(@Valid @RequestBody EmpresaDTO empresa) {
 		EmpresaDTO empresaDtoNova = service.update(empresa);
 		ResponseEntity response = new ResponseEntity(HttpStatus.CREATED);
 		return response.of(Optional.of(empresaDtoNova));

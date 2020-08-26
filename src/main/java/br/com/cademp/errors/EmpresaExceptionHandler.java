@@ -1,6 +1,8 @@
 package br.com.cademp.errors;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,43 +31,60 @@ public class EmpresaExceptionHandler extends ResponseEntityExceptionHandler{
 	@ExceptionHandler({ObjetoNotFoundException.class, EmptyResultDataAccessException.class})
 	public ResponseEntity<Object> handlerNotFoundResourceException(RuntimeException exception, 
 			WebRequest request  ) {
-		String descricao = messageSource.getMessage("recurso.nao-encontrado", null, 
+		String tipo = messageSource.getMessage("recurso.nao-encontrado", null, 
 				LocaleContextHolder.getLocale());
 		String origem = getUri(request);
-		return this.handleExceptionInternal(exception, new MensagemErro(descricao,exception.getMessage(), origem), 
+		return this.handleExceptionInternal(exception, new MensagemErro(tipo,exception.getMessage(), origem), 
 				new HttpHeaders(), HttpStatus.NOT_FOUND, request);
 	}
 
 	@Override
 	protected ResponseEntity<Object> handleMissingPathVariable(MissingPathVariableException ex, HttpHeaders headers,
 			HttpStatus status, WebRequest request) {
-		String descricao = messageSource.getMessage("parametro.nao-encontrado", null, 
+		String tipo = messageSource.getMessage("parametro.nao-encontrado", null, 
 				LocaleContextHolder.getLocale());
 		String origem = getUri(request);
-		return this.handleExceptionInternal(ex, new MensagemErro(descricao, ex.getMessage(), origem), 
+		return this.handleExceptionInternal(ex, new MensagemErro(tipo, ex.getMessage(), origem), 
 				headers, HttpStatus.BAD_REQUEST, request);
 	}
 
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
-		String descricao = messageSource.getMessage("mensagem.invalida", null, 
+		String tipo = messageSource.getMessage("mensagem.invalida", null, 
 				LocaleContextHolder.getLocale());
 		String origem = getUri(request);
-		return this.handleExceptionInternal(ex, new MensagemErro(descricao, ex.getMessage(), origem), 
+		return this.handleExceptionInternal(ex, new MensagemErro(tipo, ex.getMessage(), origem), 
 				headers, HttpStatus.BAD_REQUEST, request);
 	}
 
 	@Override
 	protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers,
 			HttpStatus status, WebRequest request) {
-		String descricao = messageSource.getMessage("tipo-mensagem.invalido", null, 
+		String tipo = messageSource.getMessage("tipo-mensagem.invalido", null, 
 				LocaleContextHolder.getLocale());
 		String origem = getUri(request);
-		return this.handleExceptionInternal(ex, new MensagemErro(descricao, ex.getMessage(), origem), 
+		return this.handleExceptionInternal(ex, new MensagemErro(tipo, ex.getMessage(), origem), 
 				headers, HttpStatus.BAD_REQUEST, request);
 	}
 	
+	@Override
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+			HttpHeaders headers, HttpStatus status, WebRequest request) {
+		
+		String tipo = messageSource.getMessage("campo-ausente", null, 
+				LocaleContextHolder.getLocale());
+		String origem = getUri(request);
+		List<MensagemErro> listaErros = new ArrayList<>();
+		String detalhe = "";
+		for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+			detalhe= messageSource.getMessage(fieldError, LocaleContextHolder.getLocale() );
+			listaErros.add(new MensagemErro(tipo, detalhe, origem));
+		}
+		return this.handleExceptionInternal(ex, listaErros, headers, 
+				HttpStatus.BAD_REQUEST, request);
+	}
+
 	private String getUri(WebRequest request) {
 		 return ((ServletWebRequest)request).getRequest().getRequestURI();
 	}
@@ -73,15 +94,15 @@ class MensagemErro {
 	
 	private LocalDateTime dataHora;
 	private String erro;
-	private String descricao;
-	private String origem;
+	private String tipo;
+	private String recurso;
 	
-	public MensagemErro(String descricao, String erro, String origem) {
+	public MensagemErro(String tipo, String erro, String recurso) {
 		super();
 		this.erro = erro;
-		this.descricao = descricao;
+		this.tipo = tipo;
 		this.dataHora = LocalDateTime.now();
-		this.origem = origem;
+		this.recurso = recurso;
 	}
 
 	public MensagemErro() {
@@ -104,20 +125,20 @@ class MensagemErro {
 		this.dataHora = dataHora;
 	}
 
-	public String getDescricao() {
-		return descricao;
+	public String getTipo() {
+		return tipo;
 	}
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
 
-	public String getOrigem() {
-		return origem;
+	public String getRecurso() {
+		return recurso;
 	}
 
-	public void setOrigem(String origem) {
-		this.origem = origem;
+	public void setRecurso(String origem) {
+		this.recurso = origem;
 	}
 	
 }
