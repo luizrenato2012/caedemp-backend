@@ -49,7 +49,7 @@ public class EmpresaResource {
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<EmpresaDTO>> resume(EmpresaFilter filter) {
+	public ResponseEntity<List<EmpresaDTO>> pesquisaResumo(EmpresaFilter filter) {
 		List<EmpresaDTO> lista = service.resume(filter);
 		return ResponseEntity.ok(lista);
 	}

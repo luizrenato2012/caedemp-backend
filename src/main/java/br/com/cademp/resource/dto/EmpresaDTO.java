@@ -42,7 +42,7 @@ public class EmpresaDTO {
 		id = empresa.getId();
 		cnpj = empresa.getCnpj();
 		nome = empresa.getNome();
-		tipo = empresa.getTipo().toString();
+		tipo = empresa.getTipo().toString().toUpperCase();
 		razaoSocial = empresa.getRazaoSocial();
 		contato = empresa.getContato();
 		email = empresa.getEmail();
@@ -60,7 +60,7 @@ public class EmpresaDTO {
 		empresa.setId(id);
 		empresa.setNome(nome);
 		empresa.setRazaoSocial(razaoSocial);
-		empresa.setTipo( !StringUtils.isEmpty(tipo) ? TipoEmpresa.get(tipo): null);
+		empresa.setTipo( TipoEmpresa.get(tipo));
 		return empresa;
 	}
 

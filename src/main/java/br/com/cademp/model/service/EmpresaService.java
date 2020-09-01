@@ -13,7 +13,8 @@ import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import br.com.cademp.errors.ObjetoNotFoundException;
+import br.com.cademp.exception.ErroNegocioException;
+import br.com.cademp.exception.ObjetoNotFoundException;
 import br.com.cademp.model.bean.Empresa;
 import br.com.cademp.model.bean.TipoEmpresa;
 import br.com.cademp.model.repository.EmpresaFilter;
@@ -26,9 +27,36 @@ public class EmpresaService {
 	@Autowired
 	private EmpresaRepository repository;
 	
-	public EmpresaDTO save(EmpresaDTO empresa) {
-		Empresa empresaNova = repository.save(empresa.parse());
+	public EmpresaDTO save(EmpresaDTO empresaDTO) {
+		Empresa empresa = empresaDTO.parse();
+		trataFilial(empresaDTO, empresa);
+		Empresa empresaNova = repository.save(empresa);
 		return new EmpresaDTO().build(empresaNova);
+	}
+
+	private void trataFilial(EmpresaDTO empresaDTO, Empresa empresa) {
+		if (empresaDTO.getTipo().equals(TipoEmpresa.FILIAL.toString())) {
+			validaFilial(empresaDTO);
+			setMatriz(empresa, empresaDTO);
+		}
+	}
+	
+	private void validaFilial(EmpresaDTO empresaDTO) {
+		if (empresaDTO.getTipo().equalsIgnoreCase("FILIAL") && 
+				(empresaDTO.getIdMatriz()==null || empresaDTO.getIdMatriz().equals(0l))) {
+			throw new ErroNegocioException("Filial id ["+ 
+				empresaDTO.getId() +"] sem identificacao de matriz");
+		}
+	}
+	
+	private void setMatriz(Empresa empresa, EmpresaDTO empresaDTO) {
+		Optional<Empresa> optional = repository.findById(empresaDTO.getIdMatriz());
+		Empresa matriz = optional.orElseThrow(() -> 
+			new ObjetoNotFoundException("Matriz id [" + empresaDTO.getIdMatriz() + "] nao encontrada"));
+		if (matriz.getTipo().equals(TipoEmpresa.FILIAL)) {
+			throw new ErroNegocioException("Empresa id [" + empresaDTO.getIdMatriz() + "] nao é matriz");
+		}
+		empresa.setMatriz(matriz);
 	}
 	
 	public EmpresaDTO update(EmpresaDTO empresaDto) {
@@ -41,23 +69,30 @@ public class EmpresaService {
 		return new EmpresaDTO().build(empresaNova);
 	}
 
-	private Empresa atualiza(EmpresaDTO empresaDto) {
-		Optional<Empresa> optional = repository.findById(empresaDto.getId());
-		Empresa empresaAtual = optional.orElseThrow(()->new ObjetoNotFoundException("Empresa nao encontrada"));
-		empresaAtual.setCnpj(empresaDto.getCnpj());
-		empresaAtual.setContato(empresaDto.getContato());
-		empresaAtual.setEmail(empresaDto.getEmail());
+	private Empresa atualiza(EmpresaDTO empresaDTO) {
+		Optional<Empresa> optional = repository.findById(empresaDTO.getId());
+		Empresa empresaAtual = optional.orElseThrow(()->
+			new ObjetoNotFoundException("Empresa id [" + empresaDTO.getId() + "] nao encontrada para atualização"));
+		empresaAtual = copia(empresaDTO, empresaAtual);
 		
-		if (empresaDto.getIdMatriz()!=null) {
-			empresaAtual.setMatriz(repository.getOne(empresaDto.getIdMatriz()));
+		if (empresaDTO.getTipo().equalsIgnoreCase(TipoEmpresa.FILIAL.toString())) {
+			trataFilial(empresaDTO, empresaAtual);
 		} else {
 			empresaAtual.setMatriz(null);
 		}
-		empresaAtual.setNome(empresaDto.getNome());
-		empresaAtual.setRazaoSocial(empresaDto.getRazaoSocial());
-		empresaAtual.setTipo(TipoEmpresa.get(empresaDto.getTipo()));
-		empresaAtual.setEndereco(empresaDto.getEndereco().parse());
+		
 		return empresaAtual;
+	}
+	
+	private Empresa copia(EmpresaDTO empresaDTO, Empresa empresa) {
+		empresa.setCnpj(empresaDTO.getCnpj());
+		empresa.setContato(empresaDTO.getContato());
+		empresa.setEmail(empresaDTO.getEmail());
+		empresa.setNome(empresaDTO.getNome());
+		empresa.setRazaoSocial(empresaDTO.getRazaoSocial());
+		empresa.setTipo(TipoEmpresa.get(empresaDTO.getTipo()));
+		empresa.setEndereco(empresaDTO.getEndereco().parse());
+		return empresa;
 	}
 	
 	
@@ -76,7 +111,7 @@ public class EmpresaService {
 	
 	public EmpresaDTO load(Long id) {
 		try {
-		return new EmpresaDTO().build(repository.getOne(id));
+			return new EmpresaDTO().build(repository.getOne(id));
 		} catch (EntityNotFoundException e ) {
 			throw new ObjetoNotFoundException("Empresa id [" + id + "] não encontrada");
 		}

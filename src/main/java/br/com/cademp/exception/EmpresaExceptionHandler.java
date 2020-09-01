@@ -1,4 +1,4 @@
-package br.com.cademp.errors;
+package br.com.cademp.exception;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -54,7 +54,8 @@ public class EmpresaExceptionHandler extends ResponseEntityExceptionHandler{
 		String tipo = messageSource.getMessage("mensagem.invalida", null, 
 				LocaleContextHolder.getLocale());
 		String origem = getUri(request);
-		return this.handleExceptionInternal(ex, new MensagemErro(tipo, ex.getMessage(), origem), 
+		String mensagem = ex.getCause()!=null ? ex.getCause().getMessage() : ex.getMessage();
+		return this.handleExceptionInternal(ex, new MensagemErro(tipo, mensagem, origem), 
 				headers, HttpStatus.BAD_REQUEST, request);
 	}
 
