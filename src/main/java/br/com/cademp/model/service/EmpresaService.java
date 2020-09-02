@@ -1,5 +1,6 @@
 package br.com.cademp.model.service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -10,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -141,17 +145,19 @@ public class EmpresaService {
 		return listaDto;
 	}
 	
-	public List<EmpresaDTO> resume(EmpresaFilter filter) {
-		
-		Example example = criaExample(filter);
-		List<Empresa> lista = repository.findAll(example);
-		List<EmpresaDTO> listaDto = lista.stream()
+	public Page<EmpresaDTO> resume(EmpresaFilter filter, Pageable pageable) {
+		Example<Empresa> example = criaExample(filter);
+		Page<Empresa> page = repository.findAll(example, pageable);
+
+		List<EmpresaDTO> listaDto = page.stream()
 				.map(empresa -> new EmpresaDTO().build(empresa))
 				.collect(Collectors.toList());
-		return listaDto;
+		listaDto.sort(Comparator.comparing(EmpresaDTO::getNome));
+		long totalRegistros = page.getTotalElements();
+		return new PageImpl<>(listaDto, pageable, totalRegistros);
 	}
 	
-	private Example criaExample(EmpresaFilter filter) {
+	private Example<Empresa> criaExample(EmpresaFilter filter) {
 		ExampleMatcher matcher =null;
 		
 		Empresa empresaExample = new Empresa();

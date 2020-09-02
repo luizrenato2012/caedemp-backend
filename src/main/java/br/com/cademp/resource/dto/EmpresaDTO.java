@@ -58,9 +58,9 @@ public class EmpresaDTO {
 		empresa.setEmail(this.email);
 		empresa.setEndereco(this.endereco!=null ? this.endereco.parse(): null);
 		empresa.setId(id);
-		empresa.setNome(nome);
-		empresa.setRazaoSocial(razaoSocial);
-		empresa.setTipo( TipoEmpresa.get(tipo));
+		empresa.setNome(this.nome);
+		empresa.setRazaoSocial(this.razaoSocial);
+		empresa.setTipo( TipoEmpresa.get(this.tipo));
 		return empresa;
 	}
 

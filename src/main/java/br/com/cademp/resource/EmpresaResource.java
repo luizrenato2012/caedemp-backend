@@ -6,6 +6,8 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -49,9 +51,9 @@ public class EmpresaResource {
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<EmpresaDTO>> pesquisaResumo(EmpresaFilter filter) {
-		List<EmpresaDTO> lista = service.resume(filter);
-		return ResponseEntity.ok(lista);
+	public ResponseEntity<Page<EmpresaDTO>> pesquisaResumo(EmpresaFilter filter, Pageable pageable) {
+		Page<EmpresaDTO> page = service.resume(filter, pageable);
+		return ResponseEntity.ok(page);
 	}
 	
 	@DeleteMapping("/{id}")
