@@ -16,10 +16,12 @@ import org.springframework.util.StringUtils;
 import br.com.cademp.exception.ErroNegocioException;
 import br.com.cademp.exception.ObjetoNotFoundException;
 import br.com.cademp.model.bean.Empresa;
+import br.com.cademp.model.bean.Endereco;
 import br.com.cademp.model.bean.TipoEmpresa;
 import br.com.cademp.model.repository.EmpresaFilter;
 import br.com.cademp.model.repository.EmpresaRepository;
 import br.com.cademp.resource.dto.EmpresaDTO;
+import br.com.cademp.resource.dto.EnderecoDTO;
 
 @Service
 public class EmpresaService {
@@ -36,12 +38,12 @@ public class EmpresaService {
 
 	private void trataFilial(EmpresaDTO empresaDTO, Empresa empresa) {
 		if (empresaDTO.getTipo().equals(TipoEmpresa.FILIAL.toString())) {
-			validaFilial(empresaDTO);
+			validaMatriz(empresaDTO);
 			setMatriz(empresa, empresaDTO);
 		}
 	}
 	
-	private void validaFilial(EmpresaDTO empresaDTO) {
+	private void validaMatriz(EmpresaDTO empresaDTO) {
 		if (empresaDTO.getTipo().equalsIgnoreCase("FILIAL") && 
 				(empresaDTO.getIdMatriz()==null || empresaDTO.getIdMatriz().equals(0l))) {
 			throw new ErroNegocioException("Filial id ["+ 
@@ -85,17 +87,31 @@ public class EmpresaService {
 	}
 	
 	private Empresa copia(EmpresaDTO empresaDTO, Empresa empresa) {
+		empresa = preenche(empresaDTO, empresa);
+		Endereco endereco = copiaEndereco(empresaDTO.getEndereco(), empresa.getEndereco());
+		empresa.setEndereco(endereco);
+		return empresa;
+	}
+	
+	private Empresa preenche(EmpresaDTO empresaDTO, Empresa empresa) {
 		empresa.setCnpj(empresaDTO.getCnpj());
 		empresa.setContato(empresaDTO.getContato());
 		empresa.setEmail(empresaDTO.getEmail());
 		empresa.setNome(empresaDTO.getNome());
 		empresa.setRazaoSocial(empresaDTO.getRazaoSocial());
 		empresa.setTipo(TipoEmpresa.get(empresaDTO.getTipo()));
-		empresa.setEndereco(empresaDTO.getEndereco().parse());
 		return empresa;
 	}
 	
-	
+	private Endereco copiaEndereco(EnderecoDTO enderecoDTO, Endereco endereco) {
+		endereco.setBairro(enderecoDTO.getBairro());
+		endereco.setCep(enderecoDTO.getCep());
+		endereco.setCidade(enderecoDTO.getCidade());
+		endereco.setComplemento(enderecoDTO.getComplemento());
+		endereco.setEstado(enderecoDTO.getEstado());
+		endereco.setLogradouro(enderecoDTO.getLogradouro());
+		return endereco;
+	}
 
 	public void delete(Long id) {
 		repository.deleteById(id);
