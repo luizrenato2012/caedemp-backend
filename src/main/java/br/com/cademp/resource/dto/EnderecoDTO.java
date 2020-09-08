@@ -1,15 +1,28 @@
 package br.com.cademp.resource.dto;
 
+import javax.validation.constraints.NotNull;
+
 import br.com.cademp.model.bean.Endereco;
 
 public class EnderecoDTO {
 	
 	private Long id;
+	
+	@NotNull
 	private String cep;
+	
+	@NotNull
 	private String estado;
+	
+	@NotNull
 	private String bairro ;
+	
+	@NotNull
 	private String cidade;
+	
+	@NotNull
 	private String logradouro;
+	
 	private String complemento ;
 	
 	public EnderecoDTO() {

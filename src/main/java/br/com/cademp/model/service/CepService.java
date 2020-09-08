@@ -7,7 +7,7 @@ import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.com.cademp.errors.ObjetoNotFoundException;
+import br.com.cademp.exception.ObjetoNotFoundException;
 import br.com.cademp.resource.vo.BuscaCepVO;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;

@@ -1,5 +1,8 @@
 package br.com.cademp.resource.dto;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.springframework.util.StringUtils;
 
 import br.com.cademp.model.bean.Empresa;
@@ -8,18 +11,25 @@ import br.com.cademp.model.bean.TipoEmpresa;
 public class EmpresaDTO {
 	private Long id;
 
+	@NotNull
 	private String cnpj;
 
+	@NotNull
 	private String nome;
 
+	@NotNull
 	private String tipo;
 
+	@NotNull
 	private String razaoSocial;
 
+	@NotNull
 	private String contato;
 
+	@NotNull
 	private String email;
 
+	@Valid
 	private EnderecoDTO endereco;
 	
 	private Long idMatriz;
@@ -32,7 +42,7 @@ public class EmpresaDTO {
 		id = empresa.getId();
 		cnpj = empresa.getCnpj();
 		nome = empresa.getNome();
-		tipo = empresa.getTipo().toString();
+		tipo = empresa.getTipo().toString().toUpperCase();
 		razaoSocial = empresa.getRazaoSocial();
 		contato = empresa.getContato();
 		email = empresa.getEmail();
@@ -48,9 +58,9 @@ public class EmpresaDTO {
 		empresa.setEmail(this.email);
 		empresa.setEndereco(this.endereco!=null ? this.endereco.parse(): null);
 		empresa.setId(id);
-		empresa.setNome(nome);
-		empresa.setRazaoSocial(razaoSocial);
-		empresa.setTipo( !StringUtils.isEmpty(tipo) ? TipoEmpresa.get(tipo): null);
+		empresa.setNome(this.nome);
+		empresa.setRazaoSocial(this.razaoSocial);
+		empresa.setTipo( TipoEmpresa.get(this.tipo));
 		return empresa;
 	}
 

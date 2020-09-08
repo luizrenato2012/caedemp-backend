@@ -11,7 +11,7 @@ public enum TipoEmpresa {
 		case "MATRIZ" :
 			return TipoEmpresa.MATRIZ;
 		default:
-			throw new RuntimeException("Tipo " + descricao + " nao encontrado");
+			throw new RuntimeException("Tipo de empresa [" + descricao + "] nao encontrado");
 		}
 	}
 }

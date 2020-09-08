@@ -39,7 +39,7 @@ public class Empresa {
 	private String	email;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_matriz", insertable = false, updatable = false)
+	@JoinColumn(name = "id_matriz", insertable = true, updatable = true)
 	private Empresa matriz;
 	
 	@OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)

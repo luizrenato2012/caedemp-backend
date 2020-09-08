@@ -1,4 +1,4 @@
-package br.com.cademp.errors;
+package br.com.cademp.exception;
 
 public class ObjetoNotFoundException extends RuntimeException {
 
