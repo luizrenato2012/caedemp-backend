@@ -23,8 +23,10 @@ import br.com.cademp.model.bean.Empresa;
 import br.com.cademp.model.bean.Endereco;
 import br.com.cademp.model.bean.TipoEmpresa;
 import br.com.cademp.model.repository.EmpresaFilter;
+import br.com.cademp.model.repository.EmpresaQueryFilter;
 import br.com.cademp.model.repository.EmpresaRepository;
 import br.com.cademp.resource.dto.EmpresaDTO;
+import br.com.cademp.resource.dto.EmpresaResumo;
 import br.com.cademp.resource.dto.EnderecoDTO;
 
 @Service
@@ -32,6 +34,9 @@ public class EmpresaService {
 
 	@Autowired
 	private EmpresaRepository repository;
+	
+	@Autowired
+	private EmpresaQueryFilter repositoryFilter;
 	
 	public EmpresaDTO save(EmpresaDTO empresaDTO) {
 		Empresa empresa = empresaDTO.parse();
@@ -145,7 +150,7 @@ public class EmpresaService {
 		return listaDto;
 	}
 	
-	public Page<EmpresaDTO> resume(EmpresaFilter filter, Pageable pageable) {
+	public Page<EmpresaDTO> filtra(EmpresaFilter filter, Pageable pageable) {
 		Example<Empresa> example = criaExample(filter);
 		Page<Empresa> page = repository.findAll(example, pageable);
 
@@ -155,6 +160,12 @@ public class EmpresaService {
 		listaDto.sort(Comparator.comparing(EmpresaDTO::getNome));
 		long totalRegistros = page.getTotalElements();
 		return new PageImpl<>(listaDto, pageable, totalRegistros);
+	}
+	
+	public Page <EmpresaResumo> resume (Long id, Pageable pageable) {
+		Page<EmpresaResumo> page = repositoryFilter.resume(id, pageable);
+		long totalRegistros = page.getTotalElements();
+		return new PageImpl(page.getContent(), pageable, totalRegistros);
 	}
 	
 	private Example<Empresa> criaExample(EmpresaFilter filter) {
