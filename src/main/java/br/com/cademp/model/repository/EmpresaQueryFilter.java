@@ -12,6 +12,7 @@ import br.com.cademp.resource.dto.EmpresaResumo;
 @Repository
 public interface EmpresaQueryFilter extends JpaRepository<Empresa, Long> {
 
-	@Query(value="select new br.com.cademp.resource.dto.EmpresaResumo(e.id, e.tipo, e.nome, e.cnpj) from Empresa e where e.id = :id")
+	@Query(value="select new br.com.cademp.resource.dto.EmpresaResumo(e.id, e.tipo, e.nome, e.cnpj, e.endereco.cidade, e.endereco.estado) from Empresa e " +
+				 " where e.matriz.id = :id")
 	public Page<EmpresaResumo> resume (Long id, Pageable pageable);
 }
